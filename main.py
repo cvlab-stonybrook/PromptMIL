@@ -195,6 +195,16 @@ def main(args):
                          )
 
     trainer.fit(trainer_model, data_module)
+    
+    if len(args.gpu_id) > 1:
+        torch.distributed.destroy_process_group()
+        if trainer.is_global_zero:
+            trainer = pl.Trainer(default_root_dir=os.path.join(args.output_dir, args.run_name), 
+                                 num_sanity_val_steps=0, logger=logger,
+                                 accelerator="gpu", devices=[args.gpu_id[0]], )
+            trainer.test(trainer_model, data_module)
+    else:
+        trainer.test(trainer_model, data_module)
 
 
 def add_argument_fun(parser):

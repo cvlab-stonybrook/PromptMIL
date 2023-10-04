@@ -121,7 +121,9 @@ class MilE2EModule(pl.LightningModule):
             opt.zero_grad()
 
         self.log("Loss/train", loss, on_step=True, on_epoch=True, sync_dist=True)
-        self.train_metrics.update(y_prob, label)
+        #self.train_metrics.update(y_prob, label)
+        self.train_metrics(y_prob, label)
+        self.log_dict(self.train_metrics, on_step=False, on_epoch=True, sync_dist=True)
 
         return loss
 
@@ -134,8 +136,10 @@ class MilE2EModule(pl.LightningModule):
         if not self.trainer.sanity_checking:
             prefix = get_prefix_from_val_id(dataloader_idx)
             metrics_idx = dataloader_idx if dataloader_idx is not None else 0
-            self.log("Loss/%s" % prefix, loss, on_step=True, on_epoch=True, sync_dist=True, add_dataloader_idx=False)
-            self.valid_metrics[metrics_idx].update(y_prob, label)
+            self.log("Loss/%s" % prefix, loss, on_step=False, on_epoch=True, sync_dist=True, add_dataloader_idx=False)
+            #self.valid_metrics[metrics_idx].update(y_prob, label)
+            self.valid_metrics[metrics_idx](y_prob, label)
+            self.log_dict(self.valid_metrics[metrics_idx], on_step=False, on_epoch=True, sync_dist=True, add_dataloader_idx=False)
         return loss
 
     def test_step(self, batch, batch_idx):
@@ -145,25 +149,15 @@ class MilE2EModule(pl.LightningModule):
         y, loss, y_prob = self(img, label=label)
 
         self.log("Loss/final_test", loss, on_step=False, on_epoch=True, sync_dist=True)
-        self.test_metrics.update(y_prob, label)
-        return loss
+        #self.test_metrics.update(y_prob, label)
+        self.test_metrics(y_prob, label)
+        self.log_dict(self.test_metrics, on_step=False, on_epoch=True, sync_dist=True)
+        return self.test_metrics
 
     def on_train_epoch_end(self):
-        self.log_dict(self.train_metrics.compute(), sync_dist=True)
-        self.train_metrics.reset()
-
         sch = self.lr_schedulers()
         sch.step()
 
-    def on_validation_epoch_end(self):
-        if not self.trainer.sanity_checking:
-            for valM in self.valid_metrics:
-                self.log_dict(valM.compute(), sync_dist=True, add_dataloader_idx=False)
-                valM.reset()
-
-    def on_test_epoch_end(self):
-        self.log_dict(self.test_metrics.compute(), sync_dist=True)
-        self.test_metrics.reset()
 
     def configure_optimizers(self):
         # if self.args.weight_decay is None:
