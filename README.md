@@ -1,5 +1,5 @@
 # Prompt-MIL: Boosting Multi-Instance Learning Schemes via Task-specific Prompt Tuning
-Pytorch implementation for the prompt tuning framework for MIL schemes described in the paper [Prompt-MIL: Boosting Multi-Instance Learning Schemes via Task-specific Prompt Tuning](empty), [arxiv](https://arxiv.org/abs/2303.12214) and [video](https://youtu.be/nLoeoILkh7k) (_MICCAI 2023, accepted for oral presentation_).  
+Pytorch implementation for the prompt tuning framework for MIL schemes described in the paper [Prompt-MIL: Boosting Multi-Instance Learning Schemes via Task-specific Prompt Tuning](https://link.springer.com/chapter/10.1007/978-3-031-43993-3_60), [arxiv](https://arxiv.org/abs/2303.12214) and [video](https://youtu.be/nLoeoILkh7k) (_MICCAI 2023, accepted for oral presentation_).  
 
 <div>
   <img src="imgs/overview.png" width="100%"  alt="The overview of our framework."/>
@@ -86,7 +86,8 @@ If you use the code or results in your research, please use the following BibTeX
   author={Zhang, Jingwei and Kapse, Saarthak and Ma, Ke and Prasanna, Prateek and Saltz, Joel and Vakalopoulou, Maria and Samaras, Dimitris},
   booktitle={International Conference on Medical Image Computing and Computer-Assisted Intervention},
   year={2023},
-  organization={Springer}
+  publisher="Springer Nature Switzerland",
+  pages="624--634",
 }
 ```
 
